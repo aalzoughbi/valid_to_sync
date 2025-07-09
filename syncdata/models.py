@@ -9,6 +9,7 @@ class SyncedRecord(models.Model):
     ad_display_name = models.CharField(max_length=255, null=True, blank=True)
     ad_samaccountname = models.CharField(max_length=255, null=True, blank=True)
     ad_enabled = models.BooleanField(null=True, blank=True)
+    distinguished_name = models.CharField(max_length=1024, null=True, blank=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

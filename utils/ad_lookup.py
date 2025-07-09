@@ -48,7 +48,7 @@ def find_ad_user(last_name, first_name):
             (givenName={norm_gn})
         )
     )'''
-    attributes = ['displayName', 'sAMAccountName', 'givenName', 'sn', 'userAccountControl',]
+    attributes = ['displayName', 'sAMAccountName', 'givenName', 'sn', 'userAccountControl', 'distinguishedName']
 
     normalized_sn = normalize_name(last_name)
     normalized_gn = normalize_name(first_name)
@@ -81,7 +81,9 @@ def find_ad_user(last_name, first_name):
                 return {
                     'display_name': getattr(entry, 'displayName', None).value if getattr(entry, 'displayName', None) else '',
                     'sAMAccountName': getattr(entry, 'sAMAccountName', None).value if getattr(entry, 'sAMAccountName', None) else '',
-                    'enabled': enabled
+                    'distinguishedName': getattr(entry, 'distinguishedName', None).value if getattr(entry, 'distinguishedName', None) else '',
+                    'enabled': enabled,
+
                 }
 
         # Handle paging

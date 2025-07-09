@@ -38,7 +38,7 @@ def sync_valid_to():
             )
             SELECT [FIRST_NAME], [LAST_NAME], [VALID_TO] 
             FROM RANKED 
-            WHERE rn2 = 1 AND CAST(CONVERT(VARCHAR(8), [VALID_TO]) AS DATE) < CAST(GETDATE() AS DATE)
+            WHERE rn2 = 1 AND CAST(CONVERT(VARCHAR(8), [VALID_TO]) AS DATE) < CAST(GETDATE() AS DATE) AND FIRST_NAME = 'Amer'
             
         ''')
         rows = cursor.fetchall()
@@ -52,6 +52,7 @@ def sync_valid_to():
                     first_name=first_name,
                     last_name=last_name,
                     valid_to=valid_to_date,
+
                 )
 
                 ad_user = find_ad_user(last_name, first_name)
@@ -59,4 +60,5 @@ def sync_valid_to():
                     record.ad_display_name = ad_user['display_name']
                     record.ad_samaccountname = ad_user['sAMAccountName']
                     record.ad_enabled = ad_user['enabled']
+                    record.distinguished_name = ad_user['distinguishedName']
                     record.save()
