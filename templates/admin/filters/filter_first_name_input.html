@@ -1,0 +1,24 @@
+<!-- DEBUG: CUSTOM FILTER TEMPLATE LOADED -->
+
+{% load admin_urls %}
+<div style="padding-left:16px">
+  <form method="get">
+    {% for choice in choices %}
+        <label for="id_{{ choice.parameter_name }}">{{ choice.title }}:</label><br>
+        <input type="text" id="id_{{ choice.parameter_name }}" name="{{ choice.parameter_name }}" value="{{ choice.value|default_if_none:'' }}" class="vTextField">
+        <button type="submit" style="    font-size: 0.8125rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--body-bg);
+    box-shadow: 0 -15px 20px -10px rgba(0, 0, 0, 0.15) inset;
+    cursor: pointer;
+    height: 1.5rem;
+    line-height: 1;
+    padding: 4px 8px;
+    margin: 0;
+    color: var(--body-fg);
+}" >Filter</button>
+    {% endfor %}
+  </form>
+</div>
+
