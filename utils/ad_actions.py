@@ -1,4 +1,5 @@
 from ldap3 import Server, Connection, ALL, SIMPLE, Tls, MODIFY_REPLACE
+from ldap3.utils.dn import parse_dn
 import ssl
 import re
 
@@ -17,20 +18,20 @@ def _connect_to_ad():
     print(f"[DEBUG] Connected and bound as {AD_USER}")
     return conn
 
+
 def _extract_cn(dn):
     print(f"[DEBUG] Extracting CN from DN: {dn}")
-    match = re.match(r'^CN=((?:\\.|[^,])*)', dn)
-    if not match:
-        raise ValueError(f"Invalid DN format: {dn}")
-    cn = match.group(1).replace('\\,', ',')
-    print(f"[DEBUG] Extracted CN: {cn}")
-    return cn
+    rdn_components = parse_dn(dn)
+    for attr, value, _ in rdn_components:
+        if attr.upper() == 'CN':
+            print(f"[DEBUG] Extracted CN: {value}")
+            return value
+    raise ValueError(f"CN not found in DN: {dn}")
 
 def _move_user(conn, dn, target_ou):
     try:
         print(f"[DEBUG] Moving user: {dn} to {target_ou}")
         cn = _extract_cn(dn)
-        print(f"[DEBUG] Modifying DN with new superior: {target_ou}")
         new_rdn = f"CN={cn}"
         conn.modify_dn(dn, new_rdn, new_superior=target_ou)
         print(f"[DEBUG] LDAP modify_dn result: {conn.result}")
@@ -56,7 +57,8 @@ def deactivate_user(dn):
             raise Exception(f"Failed to disable: {conn.result}")
 
         print(f"[DEBUG] Moving user to Disabled OU")
-        _move_user(conn, dn, DISABLED_USERS_OU)
+        new_dn = _move_user(conn, dn, DISABLED_USERS_OU)
+        return new_dn
     except Exception as e:
         print(f"[ERROR] Deactivation failed: {e}")
         raise
@@ -76,6 +78,7 @@ def activate_user(dn):
         print(f"[DEBUG] LDAP modify result (enable): {conn.result}")
         if conn.result['description'] != 'success':
             raise Exception(f"Failed to enable: {conn.result}")
+        return new_dn
     except Exception as e:
         print(f"[ERROR] Activation failed: {e}")
         raise

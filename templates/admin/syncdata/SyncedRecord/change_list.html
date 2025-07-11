@@ -1,0 +1,10 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+  {{ block.super }}
+  {% if column_pref_link %}
+    <li>
+      <a href="{{ column_pref_link }}" class="button">Column Preferences</a>
+    </li>
+  {% endif %}
+{% endblock %}

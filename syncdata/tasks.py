@@ -38,7 +38,7 @@ def sync_valid_to():
             )
             SELECT [FIRST_NAME], [LAST_NAME], [VALID_TO] 
             FROM RANKED 
-            WHERE rn2 = 1 AND CAST(CONVERT(VARCHAR(8), [VALID_TO]) AS DATE) < CAST(GETDATE() AS DATE) AND FIRST_NAME = 'Amer'
+            WHERE rn2 = 1 AND CAST(CONVERT(VARCHAR(8), [VALID_TO]) AS DATE) < CAST(GETDATE() AS DATE) 
             
         ''')
         rows = cursor.fetchall()
